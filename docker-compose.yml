@@ -1,0 +1,37 @@
+version: "3.7"
+services:
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:0.29
+    container_name: pocketbase
+    restart: unless-stopped
+    environment:
+      ENABLE_HTML_RENDERING: false                             # Whether or not to set innerHTML or innerText
+      SERVICE_NAME: mail-catcher                              # Name of the service as it appears on the web page
+      PB_HOST: http://127.0.0.1:80                     # Full URL of pocketbase instance
+      MAIL_DOMAINS: mail-catcher.net,sub.mail-catcher.net     # Comma separated list of email domains for UI email generator
+    ports:
+      - "80:8090"
+    volumes:
+      - ./pocketbase-service/pb_hooks:/pb_hooks
+      - ./pocketbase-service/pb_migrations:/pb_migrations
+      - ./pocketbase-service/pb_public:/pb_public
+    command:
+      - --migrationsDir
+      - /pb_migrations
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  mailin-service:
+    container_name: mailin-service
+    build: ./mailin-service
+    environment:
+      PB_HOST: http://pocketbase:8090 # If running the vanilla setup, this value is an inter-container call
+    ports:
+      - "25:1025"
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+        restart: true
+

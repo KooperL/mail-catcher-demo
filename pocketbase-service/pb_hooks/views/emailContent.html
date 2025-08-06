@@ -1,0 +1,35 @@
+{{define "body"}}
+    <div id="html-text-node" class="hidden">{{.MAIL_HTML}}</div>
+    <div id="pure-text-node" class="hidden">{{.MAIL_TEXT}}</div>
+    <div id="html-render-option-node" class="hidden">{{.ENABLE_HTML_RENDERING}}</div>
+    <div class="main-container max-w-7xl mx-auto space-y-6">
+  <a id="back-button" href="/emails?username={{.MAIL_USERNAME}}&domain={{.MAIL_DOMAIN}}">Back to email list</a>
+        <div class="subject-container glass-effect border border-white/20 rounded-3xl p-8 shadow-2xl transform transition-transform duration-300 hover:-translate-y-1">
+          {{.MAIL_SUBJECT}}
+        </div>
+        <div id="content-container" class="content-container glass-effect border border-white/20 rounded-3xl p-8 shadow-2xl transform transition-transform duration-300 hover:-translate-y-1">
+        </div>
+    </div>
+<script defer>
+const htmlRenderingNode = document.getElementById('html-render-option-node')
+const htmlTextNode = document.getElementById('html-text-node')
+const pureTextNode = document.getElementById('pure-text-node')
+const htmlContentNode = document.getElementById('content-container')
+
+if (!htmlTextNode?.innerHTML) throw new Error('No content')
+if (!pureTextNode?.innerHTML) throw new Error('text node missing')
+if (!htmlContentNode) throw new Error('Content node missing')
+
+const isHTMLRenderingEnabled = /true/i.test(htmlRenderingNode?.innerHTML ?? 'false')
+if (isHTMLRenderingEnabled) {
+  function unescapeHtml(str) {
+    const div = document.createElement('div');
+    div.innerHTML = str;
+    return div.textContent || div.innerText || '';
+  }
+  htmlContentNode.innerHTML = unescapeHtml(htmlTextNode.innerHTML)
+} else {
+  htmlContentNode.innerText = pureTextNode.innerText
+}
+</script>
+{{end}}
