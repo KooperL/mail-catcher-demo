@@ -34,7 +34,7 @@
     <div class="glass-effect border border-white/20 rounded-3xl p-10 shadow-2xl max-w-lg w-full transform transition-transform duration-300 hover:-translate-y-2">
         <div class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-extrabold gradient-text mb-3 tracking-tight">{{.SERVICE_NAME}}</h1>
-            <p class="text-slate-600 text-lg leading-relaxed">Disposable catch-all email service with REST API functionality. Beware: emails and their contents are not private and require no authentication or authorization to access.</p>
+            <p class="text-slate-600 text-lg leading-relaxed">This is a live demo of [mail-catcher](https://github.com/kooperl/mail-catcher). It's a disposable catch-all email service with REST API functionality. Note that emails and their contents are accessible to anyone on this demo. Certain features are disabled and data is cleared regularly.</p>
         </div>
 
         <div class="mb-6">
@@ -67,7 +67,7 @@
         <div class="forward-section opacity-0 transform -translate-y-2 transition-all duration-400" id="forwardSection">
             <div class="mb-5">
                 <label class="block font-semibold text-gray-700 mb-2 text-sm" for="forwardEmail">Forward to Email</label>
-                <input type="email" id="forwardEmail" class="w-full p-4 border-2 border-gray-200 rounded-xl text-base bg-white transition-all duration-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none" placeholder="your.email@gmail.com" oninput="updateEmail()">
+                <input disabled type="email" id="forwardEmail" class="w-full p-4 border-2 border-gray-200 rounded-xl text-base bg-white transition-all duration-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none" placeholder="your.email@gmail.com" oninput="updateEmail()">
             </div>
         </div>
 
@@ -151,31 +151,7 @@
             
             let finalUsername = username;
             
-            if (isForwardingEnabled && forwardInput.value.trim()) {
-                const forwardEmail = forwardInput.value.trim();
-                const encodedForwardEmail = btoa(JSON.stringify({fw: forwardEmail})).replaceAll('=', '');
-                const prefixedForwardEmail = encodedForwardEmail.startsWith('MCb64') ? encodedForwardEmail : 'MCB64' + encodedForwardEmail;
-                finalUsername = username + '.' + prefixedForwardEmail;
-            }
-            
             emailInput.value = finalUsername + '@' + selectedDomain;
-        }
-
-        function toggleForward() {
-            const forwardSection = document.getElementById('forwardSection');
-            const forwardInput = document.getElementById('forwardEmail');
-            const checkbox = document.getElementById('forwardToggle');
-            
-            if (checkbox.checked) {
-                forwardSection.classList.add('active', 'opacity-100');
-                forwardSection.classList.remove('opacity-0', '-translate-y-2');
-            } else {
-                forwardSection.classList.remove('active', 'opacity-100');
-                forwardSection.classList.add('opacity-0', '-translate-y-2');
-                forwardInput.value = '';
-            }
-            
-            updateEmail();
         }
 
         function visitInbox() {

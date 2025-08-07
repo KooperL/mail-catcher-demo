@@ -4,7 +4,7 @@ cronAdd("delete_stale_mail", "0 2 * * *", () => {
     const dao = $app.dao()
     
     const staleDate = new Date()
-    staleDate.setDate(staleDate.getDate() - 30)
+    staleDate.setDate(staleDate.getDate() - 5)
     const staleDateStr = staleDate.toISOString().split('T')[0] + ' 00:00:00.000Z'
     
     try {
@@ -80,37 +80,6 @@ routerAdd("GET", "/api/mc/logs", (e) => {
 // ========= FORWARD MAIL
 
 onRecordCreate((e) => {
-  const indicator = 'MCb64'
-  try {
-    const {base64Encode, base64Decode} = require(`${__hooks}/utils.js`)
-    const username = e.record['username']
-    if (!username) return
-    const dotSeparated = username.split('.')
-    const finalItem = dotSeparated.slice(-1)
-    const isMailCatcherB64Encoded = finalItem.startsWith(indicator)
-    if (dotSeparated === 1 || !isMailCatcherB64Encoded) return
-
-    const decoded = base64Decode(finalItem.slice(indicator.length))
-    const encodedOptions = JSON.parse(decoded)
-
-    // fw = forward address
-    if (!encodedOptions.hasOwnProperty('fw')) return
-    const message = new MailerMessage({
-        from: {
-          address: e.app.settings().meta.senderAddress,
-          name: e.app.settings().meta.senderName,
-        },
-        to: [{address: encodedOptions['fw']}],
-        subject: e.record['subject'],
-        html: e.record['html'],
-        // bcc, cc and custom headers are also supported...
-    })
-    e.app.newMailClient().send(message)
-  } catch (e) {
-    console.error(e)
-  } finally {
-    e.next()
-  }
 }, "inbound_mail")
 
 
