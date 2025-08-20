@@ -10,7 +10,7 @@ services:
       PB_HOST: http://127.0.0.1:80                     # Full URL of pocketbase instance
       MAIL_DOMAINS: mail-catcher.net,sub.mail-catcher.net     # Comma separated list of email domains for UI email generator
     ports:
-      - "80:8090"
+      - "8090:8090"
     volumes:
       - ./pocketbase-service/pb_hooks:/pb_hooks
       - ./pocketbase-service/pb_migrations:/pb_migrations
